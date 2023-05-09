@@ -50,8 +50,30 @@ async function run() {
       const id = req.params.id
       const product = req.body 
       console.log(product)
-      const updatedProduct = await products.updateOne({_id: new ObjectId(id)}, {$set: {product}}, {upsert: true})
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateProduct = {
+        $set: {
+          name: product.name,
+          seller: product.seller,
+          category: product.category,
+          price: product.price,
+          stock: product.stock,
+          ratings: product.ratings,
+          ratingsCount: product.ratingsCount,
+          shipping: product.shipping,                 
+          img: product.img
+        },
+      };
+      const updatedProduct = await products.updateOne(filter, updateProduct, options);
+      // const updatedProduct = await products.updateOne({_id: new ObjectId(id)}, {$set: {product}}, {upsert: true})
       res.send(updatedProduct)
+    })
+
+    app.delete("/delete/:id", async (req, res) => {
+      const id = req.params.id
+      const result = await products.deleteOne({_id: new ObjectId(id)})
+      res.send(result)
     })
 
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
